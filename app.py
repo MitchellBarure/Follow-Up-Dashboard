@@ -2,13 +2,13 @@
 app.py
 This script acts as a middleman between the Google sheet and the frontend BY:
  1. Listening for HTTP requests
- 2. Talking to sheets_client.py to read and update records
+ 2. Talking to sheets_client.py to read, create and update records
  3. Returning JSON data to the user
 """
 
 import json
 from http.server import HTTPServer, BaseHTTPRequestHandler
-from sheets_client import read_records, update_record
+from sheets_client import read_records, update_record, add_record
 
 HOST = "0.0.0.0"
 PORT = 8080
@@ -20,7 +20,7 @@ class RequestHandler(BaseHTTPRequestHandler):
         self.send_response(status)
         self.send_header("Content-type", content_type)
         self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
         self.end_headers()
 
@@ -37,6 +37,45 @@ class RequestHandler(BaseHTTPRequestHandler):
             except Exception as e:
                 self._set_headers(500)
                 self.wfile.write(json.dumps({"error": str(e)}).encode())
+        else:
+            self._set_headers(404)
+            self.wfile.write(json.dumps({"error": "Not Found"}).encode())
+
+    #Create a new record using API endpoint (Post api/records)
+    def do_POST(self):
+        if self.path == "/api/records":
+            content_length = int(self.headers.get("Content-Length", 0))
+            body_data = self.rfile.read(content_length).decode()
+
+            try:
+                body_json = json.loads(body_data)
+
+                name = body_json.get("name")
+                phone = body_json.get("phone")
+                assigned_to = body_json.get("assignedTo")
+                category = body_json.get("category")
+                status = body_json.get("status")
+                notes = body_json.get("notes", "")
+
+                #Input Validation
+                if not name or not phone or not assigned_to or not category or not status:
+                    raise ValueError("Missing required fields")
+
+                new_id = add_record(name, phone, assigned_to, category, status, notes)
+
+                self._set_headers(201)
+                self.wfile.write(json.dumps({
+                    "message": "Record added",
+                    "id": new_id
+                }).encode())
+
+            except ValueError as e:
+                self._set_headers(400)
+                self.wfile.write(json.dumps({"error": str(e)}).encode())
+
+            except Exception as e:
+                self._set_headers(500)
+                self.wfile.write(json.dumps({"error": "Internal server error"}).encode())
         else:
             self._set_headers(404)
             self.wfile.write(json.dumps({"error": "Not Found"}).encode())
@@ -63,14 +102,18 @@ class RequestHandler(BaseHTTPRequestHandler):
                 #Error handling: check if the record id exists
                 if success:
                     self._set_headers(200)
-                    self.wfile.write(json.dumps({"message": "Record Updated"}).encode())
+                    self.wfile.write(json.dumps({"Message": "Record Updated"}).encode())
                 else:
                     self._set_headers(404)
-                    self.wfile.write(json.dumps({"error": "Record Not Found"}).encode())
+                    self.wfile.write(json.dumps({"Error": "Record Not Found"}).encode())
+
+            except ValueError as e:
+                self._set_headers(400)
+                self.wfile.write(json.dumps({"Error": str(e)}).encode())
 
             except Exception as e:
-                self._set_headers(400)
-                self.wfile.write(json.dumps({"error": str(e)}).encode())
+                self._set_headers(500)
+                self.wfile.write(json.dumps({"Error": "internal server error!"}).encode())
 
         else:
             self._set_headers(404)

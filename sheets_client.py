@@ -48,21 +48,45 @@ def read_records():
             "id": row[0],
             "Name": row[1],
             "Phone": row[2],
-            "Category": row[3],
-            "Status": row[4],
-            "AssignedTo": row[5],
+            "AssignedTo": row[3],
+            "Category": row[4],
+            "Status": row[5],
             "LastUpdated": row[6],
             "Notes": row[7],
         })
 
     return records
 
+"""Control user input for AssignedTo Category, and Status.
+ALLOWED_AssignedTo = [
+    "Mitchell",
+    "Raissa",
+    "Mufaro",
+    "Blen",
+    "Lucia"
+]
+
+ALLOWED_CATEGORIES = [
+    "ABSENT_FOR_A_WHILE",
+    "FIRST_TIMER",
+    "OUTREACH",
+    "SECOND_TIMER"
+]"""
+
+ALLOWED_STATUSES = [
+    "Waiting for a response",
+    "No response",
+    "Indecisive",
+    "Available",
+    "Unavailable"
+]
+
 #UPDATE RECORDS (when a user modifies a record, update the status, notes and timestamP)
 def update_record(record_id, new_status, new_notes):
     service = get_service()
     sheet = service.spreadsheets()
 
-    #Fetch all rows to find the correct row index
+    #Fetch all the rows to find the correct row index
     all_records = read_records()
 
     row_index = None
@@ -76,18 +100,26 @@ def update_record(record_id, new_status, new_notes):
 
     now = datetime.datetime.now(datetime.timezone.utc).isoformat()
 
+    #Validate Status update
+    if new_status not in ALLOWED_STATUSES:
+        raise ValueError(f"Invalid status value: {new_status}")
+
+    #Ensure that notes are always a string
+    if new_notes is None:
+        new_notes = ""
+
     updated_row = [
         record_id,
         all_records[row_index - 2]["Name"],
         all_records[row_index - 2]["Phone"],
+        all_records[row_index - 2]["AssignedTo"],
         all_records[row_index - 2]["Category"],
         new_status,
-        all_records[row_index - 2]["AssignedTo"],
         now,
         new_notes
     ]
 
-    #Write back the updates to google sheets
+    #Write back the updates to the Google sheet
     range_to_update = f"Sheet1!A{row_index}:H{row_index}"
 
     request = sheet.values().update(
@@ -99,4 +131,50 @@ def update_record(record_id, new_status, new_notes):
 
     request.execute()
     return True
+
+def add_record(name, phone, assignedTo, category, status, notes=""):
+    service = get_service()
+    sheet = service.spreadsheets()
+
+    all_records = read_records()
+
+    # Determine next ID for new record additions
+    if all_records:
+        existing_ids = [int(r["id"]) for r in all_records if r["id"].isdigit()]
+        next_id = str(max(existing_ids) + 1) if existing_ids else "1"
+    else:
+        next_id = "1"
+
+    if status not in ALLOWED_STATUSES:
+        raise ValueError(f"Invalid status value: {status}")
+
+    if notes is None:
+        notes = ""
+
+    now = datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+    new_row = [
+        next_id,
+        name,
+        phone,
+        assignedTo,
+        category,
+        status,
+        now,
+        notes
+    ]
+
+    request = sheet.values().append(
+        spreadsheetId=SPREADSHEET_ID,
+        range="Sheet1!A:H",
+        valueInputOption="USER_ENTERED",
+        insertDataOption="INSERT_ROWS",
+        body={"values": [new_row]},
+    )
+
+    request.execute()
+    return next_id
+
+
+
 
