@@ -1,6 +1,13 @@
 Ministry Follow-Up Dashboard
 
-A web application for managing fellowship follow-ups with real-time google sheets integration and load-balanced deployment.
+A small full-stack application that helps a ministry or fellowship team manage follow-up for attendees and contacts.
+
+Instead of manually scrolling through Google Sheets, this dashboard:
+- Reads records from a shared Google Sheet using the **Google Sheets API**
+- Shows them in a web UI with **search** and **filters**
+- Lets team members update **status + notes**
+- Lets the team lead create **new records**
+- Writes all changes back to the same Google Sheet
 
 TABLE OF CONTENTS
 Overview
@@ -36,8 +43,9 @@ Load balanced (deployed across two servers for reliability)
 Responsive design
 
 TECH STACK
-Frontend: HTML, CSS & Js
-Backend: Python, http.server(standard library), Google sheets API v4, gsread library
+Frontend: Vanilla HTML, CSS & Js
+Backend: Python, http.server(standard library), Google sheets API v4
+Data store: Google sheet (acts like a simple shared database)
 Infrastructure: Nginx , load balancer and ubuntu servers (web01, web02 & LB-01)
 
 ARCHITECTURE
@@ -116,6 +124,8 @@ map-fellowship-dashboard/
 └── demo/                  # Screenshots/demo materials
 └── demo-video.mp4
 
+ERROR HANDLING**?
+
 CHALLENGES & SOLUTIONS: **?
 Challenge 1: [INSERT TITLE]
 Problem:
@@ -125,11 +135,11 @@ CREDITS
 Google Sheets API - Data storage and synchronization powered by Google LLC
 gspread library - Python wrapper for Google Sheets API
 Nginx - Web server and load balancing
-[Your Name] - Developer
+Mitchell Barure - Developer
 
 LICENSE **?
 
-CONTACT **?
+CONTACT 
 Developer: Mitchell Barure
 Email: m.barure@alustudent.com
 Github **?
