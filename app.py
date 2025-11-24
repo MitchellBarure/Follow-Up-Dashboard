@@ -58,7 +58,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                 notes = body_json.get("notes", "")
 
                 #Input Validation
-                if not name or not phone or not assigned_to or not category or not status:
+                if not name or not phone or not assigned_to or not category:
                     raise ValueError("Missing required fields")
 
                 new_id = add_record(name, phone, assigned_to, category, status, notes)
