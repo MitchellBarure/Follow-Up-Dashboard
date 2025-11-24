@@ -14,7 +14,7 @@ def add_test_record():
     now = datetime.datetime.now(datetime.timezone.utc).isoformat()
     # id, Name, Phone, Category, Status, AssignedTo, LastUpdated, Notes
     new_row = [
-        "01", "Test User", "+250795986428", "FIRST_TIMER", "NOT_CONTACTED", "Successful", now, "Created via API"
+        "01", "Test User", "0795986428", "Team member", "FIRST_TIMER", "Indecisive", now, "Created via API"
     ]
     request = sheet.values().append(
         spreadsheetId=SPREADSHEET_ID,
