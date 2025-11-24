@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MAP Follow-up Dashboard (Summative)</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <header class="page-header">
+        <h1>Ministry Follow-Up Dashboard</h1>
+        <p class="subtitle">
+            The Next Step in Ministry Management
+        </p>
+    </header>
+
+<main class="layout">
+    <!-- The App Controls -->
+    <section class="controls-card">
+        <h2>Filters & Search</h2>
+        <div class="controls-grid">
+            <div class="control-group">
+                <label for="searchInput"> Search by name/phone number</label>
+                <input type="text" id="searchInput"  placeholder="Type name/phone number" />
+            </div>
+            <div class="control-group">
+                <label for="statusFilter">Filter by Status</label>
+                <select id="statusFilter">
+                    <option value="">All statuses</option>
+                    <option value="Waiting for a response">Waiting for a response</option>
+                    <option value="No response">No response</option>
+                    <option value="Indecisive">Indecisive</option>
+                    <option value="Available">Available</option>
+                    <option value="Unavailable">Unavailable</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="categoryFilter">Filter by category</label>
+                <select id="categoryFilter">
+                    <option value="">All categories</option>
+                    <option value="ABSENT_FOR_A_WHILE">ABSENT_FOR_A_WHILE</option>
+                    <option value="FIRST_TIMER">FIRST_TIMER</option>
+                    <option value="OUTREACH">OUTREACH</option>
+                    <option value="SECOND_TIMER">SECOND_TIMER</option>
+                </select>
+            </div>
+        </div>
+
+        <button id="clearFiltersBtn" class="btn-secondary">Clear filters</button>
+
+        <div id="statusMessage" class="status-message"></div>
+    </section>
+
+    <!-- Follow-up Records Table -->
+    <section class="table-card">
+        <h2>Follow-up Records</h2>
+        <div class="table-wrapper">
+            <table id="recordsTable">
+                <thead>
+                <tr>
+                    <th>id</th>
+                    <th>Name</th>
+                    <th>Phone Number</th>
+                    <th>Assigned To</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                    <th>Last Updated</th>
+                    <th>Notes</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody id="recordsTableBody">
+                <!-- The body will be filled dynamically by app.js -->
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Update the Records -->
+    <section class="update-card">
+        <h2>Update Record</h2>
+        <form id="updateForm">
+            <div class="control-group">
+                <label>Selected record ID</label>
+                <input type="text" id="selectedId" readonly />
+            </div>
+
+            <div class="control-group">
+                <label for="updateStatus">New status</label>
+                <select id="updateStatus" required>
+                    <option value="">Select a status</option>
+                    <option value="Waiting for a response">Waiting for a response</option>
+                    <option value="No response">No response</option>
+                    <option value="Indecisive">Indecisive</option>
+                    <option value="Available">Available</option>
+                    <option value="Unavailable">Unavailable</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="updateNotes">Notes</label>
+                <textarea id="updateNotes" rows="4" placeholder="Add or update notes about this person..."
+                ></textarea>
+            </div>
+
+            <button type="submit" class="btn-primary">Save Update</button>
+        </form>
+    </section>
+</main>
+
+    <footer class="page-footer">
+        <p>Powered by Python, Google Sheets API, and a simple HTTP server for the Summative Assignment.</p>
+    </footer>
+
+    <!--Ensures that the script runs after the body -->
+    <script src="app.js"></script>
+</body>
+</html>
