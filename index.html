@@ -105,6 +105,45 @@
             <button type="submit" class="btn-primary">Save Update</button>
         </form>
     </section>
+
+    <!--Add a new record (for Team lead) -->
+    <section class="add-card">
+        <h2>Add New Record (Team Lead)</h2>
+        <form id="addForm">
+            <div class="control-group">
+                <label for="addName">Name</label>
+                <input type="text" id="addName" required />
+            </div>
+
+            <div class="control-group">
+                <label for="addPhone">Phone Number</label>
+                <input type="text" id="addPhone" required />
+            </div>
+
+            <div class="control-group">
+                <label for="addAssignedTo">Assigned To</label>
+                <input type="text" id="addAssignedTo" placeholder="e.g. Mitchell" required />
+            </div>
+
+            <div class="control-group">
+                <label for="addCategory">Category</label>
+                <select id="addCategory" required>
+                    <option value="">Select category</option>
+                    <option value="ABSENT_FOR_A_WHILE">ABSENT_FOR_A_WHILE</option>
+                    <option value="FIRST_TIMER">FIRST_TIMER</option>
+                    <option value="OUTREACH">OUTREACH</option>
+                    <option value="SECOND_TIMER">SECOND_TIMER</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="addNotes">Notes</label>
+                <textarea id="addNotes" rows="3" placeholder="Notes about this person (optional)"></textarea>
+            </div>
+
+            <button type="submit" class="btn-primary">Add Record</button>
+        </form>
+    </section>
 </main>
 
     <footer class="page-footer">

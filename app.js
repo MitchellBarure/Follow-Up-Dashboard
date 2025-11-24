@@ -1,6 +1,6 @@
 /*
 app.js
-This script handles all the frontend logic for the Follow-up Dashboard by:
+This script handles all the frontend logic (alongside index.html and style.css) for the Follow-up Dashboard by:
 1. Dynamically filling in the records table
 2. Enabling users to filter through and update records
 3. Validating user input and providing error messages
@@ -22,6 +22,13 @@ const selectedIdEl = document.getElementById("selectedId");
 const updateStatusEl = document.getElementById("updateStatus");
 const updateNotesEl = document.getElementById("updateNotes");
 const updateFormEl = document.getElementById("updateForm");
+
+const addFormEl = document.getElementById("addForm");
+const addNameEl = document.getElementById("addName");
+const addPhoneEl = document.getElementById("addPhone");
+const addAssignedToEl = document.getElementById("addAssignedTo");
+const addCategoryEl = document.getElementById("addCategory");
+const addNotesEl = document.getElementById("addNotes");
 
 // Helpers
 function setStatusMessage(text, type = "") {
@@ -201,6 +208,68 @@ function clearFilters() {
     renderTable();
 }
 
+function handleAddSubmit(event) {
+    event.preventDefault();
+    console.log("Add form submitted!")
+
+    const name = (addNameEl.value || "").trim();
+    const phone = (addPhoneEl.value || "").trim();
+    const assignedTo = (addAssignedToEl.value || "").trim();
+    const category = addCategoryEl.value;
+    const notes = (addNotesEl.value || "").trim();
+
+
+    // Basic validation – match backend expectations
+    if (!name || !phone || !assignedTo || !category) {
+        setStatusMessage("Please fill in all required fields (name, phone, assigned to, category).", "error");
+        return;
+    }
+
+    // Phone number validation
+    if (phone.length < 10) {
+        setStatusMessage("Phone number looks too short.", "error");
+        return;
+    }
+
+    const body = {
+        name,
+        phone,
+        assignedTo,
+        category,
+        notes,
+    };
+
+    setStatusMessage("Adding new record...", "");
+
+    fetch(`${API_BASE}/api/records`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+    })
+        .then((res) => res.json().then((data) => ({ ok: res.ok, status: res.status, data })))
+        .then(({ ok, status, data }) => {
+            if (!ok) {
+                const msg = data && data.error ? data.error : `Create failed (HTTP ${status})`;
+                throw new Error(msg);
+            }
+
+            setStatusMessage(`Record added successfully (ID ${data.id}).`, "success");
+
+            // Clear the form
+            addFormEl.reset();
+
+            // Refresh table from backend
+            fetchRecords();
+        })
+        .catch((err) => {
+            console.error(err);
+            setStatusMessage(`Error adding record: ${err.message}`, "error");
+        });
+}
+
+
 // Event listeners
 searchInputEl.addEventListener("input", () => {
     renderTable();
@@ -220,6 +289,10 @@ clearFiltersBtn.addEventListener("click", () => {
 
 tableBodyEl.addEventListener("click", handleSelectClick);
 updateFormEl.addEventListener("submit", handleUpdateSubmit);
+
+if (addFormEl) {
+    addFormEl.addEventListener("submit", handleAddSubmit);
+}
 
 // Initial load
 document.addEventListener("DOMContentLoaded", () => {
