@@ -1,8 +1,8 @@
 """
 sheets_client.py
 This file handles all the google sheet logic by:
-1. logining into google sheet api using my service_account.json,
-2. and using the API to read and update records on the google sheet.
+1. logining into google sheet api using my service_account.json (Authentification),
+2. and using the API to read, create and update records on the google sheet.
 """
 
 import os
@@ -144,6 +144,9 @@ def add_record(name, phone, assignedTo, category, status, notes=""):
         next_id = str(max(existing_ids) + 1) if existing_ids else "1"
     else:
         next_id = "1"
+
+    if not status:
+        status = "Waiting for a response"
 
     if status not in ALLOWED_STATUSES:
         raise ValueError(f"Invalid status value: {status}")
