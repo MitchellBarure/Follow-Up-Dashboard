@@ -6,7 +6,7 @@ This script handles all the frontend logic (alongside index.html and style.css) 
 3. Validating user input and providing error messages
 */
 
-const API_BASE = "http://localhost:8080"; // change to your domain when deployed
+const API_BASE = ""; // change to domain when deployed
 
 let allRecords = [];
 
