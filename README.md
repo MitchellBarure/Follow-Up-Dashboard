@@ -480,7 +480,7 @@ Follow-Up-Dashboard/
 ├── sheets_client.py        # Google Sheets API wrapper
 ├── service_account.json    # Google service account (not in repo)
 ├── .gitignore              # Git ignore rules
-└── images                  # Screenshots of UI
+└── DashboardImages         # Screenshots of UI
 
 
 # 11. Error Handling
